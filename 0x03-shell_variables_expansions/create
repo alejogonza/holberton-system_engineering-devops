@@ -1,4 +1,0 @@
-touch $FILE && chmod u+x $FILE && echo '#!/bin/bash' >> $FILE && nano $FILE
-
-
-#export FILE= namefile
