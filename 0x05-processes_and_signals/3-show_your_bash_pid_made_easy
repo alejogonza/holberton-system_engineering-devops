@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Display the process with word filter
+pgrep -l bash
