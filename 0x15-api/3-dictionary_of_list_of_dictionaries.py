@@ -1,38 +1,30 @@
 #!/usr/bin/python3
 """For a given employee ID, returns list info JSON"""
-import collections
-import csv
 import json
 import requests
 import sys
 
-if len(sys.argv) != 1:
-    exit(1)
 
-url = 'https://jsonplaceholder.typicode.com/'
+if __name__ == "__main__":
+    url = 'https://jsonplaceholder.typicode.com/'
+    user = '{}users'.format(url)
+    res = requests.get(user)
+    json_o = res.json()
+    d_task = {}
+    for user in json_o:
+        name = user.get('username')
+        userid = user.get('id')
+        todos = '{}todos?userId={}'.format(url, userid)
+        res = requests.get(todos)
+        tasks = res.json()
+        l_task = []
+        for task in tasks:
+            dict_task = {"username": name,
+                         "task": task.get('title'),
+                         "completed": task.get('completed')}
+            l_task.append(dict_task)
 
-urlUser = url + 'users/'
-urlTodos = url + 'todos/'
-
-users = requests.get(urlUser).json()
-todos = requests.get(urlTodos).json()
-
-if (len(users) == 0):
-    exit(1)
-
-data = collections.OrderedDict()
-values = []
-
-for user in users:
-    username = user.get("username")
-    for todo in todos:
-        t = collections.OrderedDict()
-        t["username"] = username
-        t["task"] = todo.get("title")
-        t["completed"] = todo.get("completed")
-        values.append(t)
-        data["1"] = values
-
-filename = "todo_all_employees.json"
-with open(filename, "w") as fp:
-    fp.write(json.dumps(data))
+        d_task[str(userid)] = l_task
+    filename = 'todo_all_employees.json'
+    with open(filename, mode='w') as f:
+        json.dump(d_task, f)
